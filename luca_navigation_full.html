@@ -1,0 +1,472 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --lb:#1565C0;--lb2:#1976D2;--lb3:#0D47A1;--lb4:#0a1d3d;
+  --ly:#FDD835;--ly2:#F9A825;
+  --bg:#0a1628;--bg2:#0d1f3c;--bg3:#1a2f56;
+  --bd:#1E3A6E;--txt:rgba(255,255,255,0.9);--txt2:rgba(255,255,255,0.55);--txt3:rgba(255,255,255,0.35);
+}
+.night{--bg:#050d1a;--bg2:#080f20;--bg3:#111d35;--bd:#152a52;}
+.app{width:100%;max-width:430px;margin:0 auto;background:var(--bg);border-radius:32px;border:2px solid var(--bd);overflow:hidden;display:flex;flex-direction:column;min-height:700px;}
+.hdr{background:var(--lb3);padding:14px 16px 10px;display:flex;align-items:center;gap:10px;}
+.hdr-logo{display:flex;align-items:center;gap:8px;}
+.star{width:36px;height:36px;flex-shrink:0;}
+.app-name{font-size:22px;font-weight:700;color:var(--ly);letter-spacing:3px;}
+.tagline{font-size:9px;color:var(--txt2);letter-spacing:1px;margin-top:-2px;}
+.hdr-right{margin-left:auto;display:flex;gap:6px;align-items:center;}
+.sig{width:7px;height:7px;border-radius:50%;background:#69F0AE;}
+.gps-t{font-size:9px;color:var(--txt2);}
+.night-btn{background:var(--bg3);border:1px solid var(--bd);border-radius:8px;padding:4px 8px;font-size:10px;color:var(--txt2);cursor:pointer;display:flex;align-items:center;gap:4px;}
+
+.srch{background:var(--bg2);padding:10px 14px;display:flex;gap:8px;border-bottom:1px solid var(--bd);}
+.srch-box{flex:1;background:var(--bg3);border:1px solid var(--bd);border-radius:22px;padding:8px 14px;color:var(--txt);font-size:13px;display:flex;align-items:center;gap:8px;cursor:pointer;}
+.srch-ph{color:var(--txt3);font-size:13px;}
+.mic{width:34px;height:34px;background:var(--ly);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+
+.screens{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.scr{display:none;flex-direction:column;flex:1;}
+.scr.on{display:flex;}
+
+.map-wrap{flex:1;position:relative;background:var(--bg);min-height:330px;overflow:hidden;}
+.map-svg{position:absolute;top:0;left:0;width:100%;height:100%;}
+.rt-line{stroke:var(--ly);stroke-width:5;fill:none;stroke-linecap:round;}
+.rt-pulse{stroke:var(--ly);stroke-width:10;fill:none;stroke-linecap:round;opacity:.3;}
+@keyframes dash{to{stroke-dashoffset:-22;}}
+.rt-anim{stroke-dasharray:8 4;animation:dash 1s linear infinite;}
+@keyframes pulsar{0%{opacity:.8;r:10;}100%{opacity:0;r:24;}}
+.pulse{animation:pulsar 2s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.4;}}
+.blink{animation:blink 1.5s infinite;}
+
+.spd{position:absolute;top:10px;left:10px;background:#fff;border-radius:50%;width:50px;height:50px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:4px solid var(--lb);z-index:5;}
+.spd-n{font-size:17px;font-weight:700;color:var(--lb3);line-height:1;}
+.spd-u{font-size:8px;color:#555;}
+.trf-bar{position:absolute;top:10px;left:68px;background:var(--bg2);border:1px solid var(--bd);border-radius:20px;padding:5px 10px;display:flex;align-items:center;gap:6px;z-index:5;}
+.trf-d{width:8px;height:8px;border-radius:50%;}
+.trf-t{font-size:10px;color:var(--txt);}
+
+.turn-card{position:absolute;top:50px;left:10px;right:10px;background:var(--lb3);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:12px;z-index:5;}
+.turn-dist{font-size:20px;font-weight:700;color:var(--ly);}
+.turn-u{font-size:10px;color:var(--txt2);}
+.turn-st{font-size:13px;color:var(--txt);font-weight:500;}
+.turn-sub{font-size:10px;color:var(--txt2);margin-top:2px;}
+
+.float-r{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:8px;z-index:5;}
+.mb{width:38px;height:38px;background:var(--bg2);border:1px solid var(--bd);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+
+.eta-card{position:absolute;bottom:10px;left:10px;right:10px;background:var(--bg2);border:1px solid var(--bd);border-radius:18px;padding:12px 16px;z-index:5;display:flex;align-items:center;gap:14px;}
+.eta-t{font-size:28px;font-weight:700;color:var(--ly);line-height:1;}
+.eta-u{font-size:10px;color:var(--txt2);margin-top:2px;}
+.eta-d{font-size:13px;color:var(--txt);font-weight:500;}
+.eta-r{font-size:11px;color:var(--txt2);margin-top:2px;}
+.go-btn{background:var(--ly);border-radius:12px;padding:10px 18px;font-size:13px;font-weight:700;color:var(--lb3);cursor:pointer;flex-shrink:0;}
+
+.btn-nav{background:var(--bg2);border-top:1px solid var(--bd);display:flex;padding:10px 0 14px;}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:2px 0;}
+.nl{font-size:9px;color:var(--txt3);letter-spacing:.5px;}
+.ni.on .nl{color:var(--ly);}
+
+.home-wrap{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+.world-bar{background:var(--lb3);margin:10px 14px;border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:10px;}
+.wt{font-size:12px;color:var(--txt);font-weight:500;}
+.ws{font-size:10px;color:var(--txt2);}
+.wc{margin-left:auto;font-size:18px;font-weight:700;color:var(--ly);}
+.shortcuts{padding:4px 14px 10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.sc{background:var(--bg3);border:1px solid var(--bd);border-radius:14px;padding:11px;display:flex;align-items:center;gap:10px;cursor:pointer;}
+.si{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sl{font-size:12px;color:var(--txt);font-weight:500;}
+.ss{font-size:10px;color:var(--txt2);margin-top:1px;}
+.sec-t{font-size:10px;color:var(--txt3);padding:6px 14px 3px;letter-spacing:1px;text-transform:uppercase;}
+.ri{padding:10px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(30,58,110,0.3);cursor:pointer;}
+.rd{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.rn{font-size:13px;color:var(--txt);}
+.ra{font-size:11px;color:var(--txt2);margin-top:1px;}
+.rdi{margin-left:auto;font-size:11px;color:var(--txt2);}
+
+.alert-wrap{flex:1;overflow-y:auto;display:flex;flex-direction:column;padding:10px 14px;gap:8px;}
+.alert-card{background:var(--bg3);border:1px solid var(--bd);border-radius:14px;padding:12px;display:flex;gap:12px;align-items:flex-start;}
+.alert-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.alert-title{font-size:13px;color:var(--txt);font-weight:500;}
+.alert-sub{font-size:11px;color:var(--txt2);margin-top:3px;line-height:1.5;}
+.alert-time{font-size:10px;color:var(--txt3);margin-top:4px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:8px;font-size:9px;font-weight:600;margin-top:4px;}
+
+.profile-wrap{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+.avatar-area{background:var(--lb3);padding:20px;display:flex;flex-direction:column;align-items:center;gap:10px;}
+.avatar{width:70px;height:70px;border-radius:50%;background:var(--ly);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:var(--lb3);}
+.av-name{font-size:16px;font-weight:700;color:var(--txt);}
+.av-sub{font-size:11px;color:var(--txt2);}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 14px;}
+.stat-card{background:var(--bg3);border:1px solid var(--bd);border-radius:12px;padding:10px;text-align:center;}
+.stat-n{font-size:18px;font-weight:700;color:var(--ly);}
+.stat-l{font-size:10px;color:var(--txt2);margin-top:2px;}
+.pref-sec{padding:4px 14px 6px;}
+.pref-title{font-size:11px;color:var(--txt3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+.pref-row{background:var(--bg3);border:1px solid var(--bd);border-radius:12px;padding:11px 14px;display:flex;align-items:center;margin-bottom:6px;cursor:pointer;}
+.pref-label{font-size:13px;color:var(--txt);flex:1;}
+.pref-val{font-size:11px;color:var(--txt2);}
+.toggle{width:36px;height:20px;border-radius:10px;border:none;cursor:pointer;position:relative;flex-shrink:0;}
+.toggle.on{background:var(--lb);}
+.toggle.off{background:var(--bg2);border:1px solid var(--bd);}
+.toggle::after{content:'';position:absolute;top:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .2s;}
+.toggle.on::after{left:18px;}
+.toggle.off::after{left:2px;}
+
+.incident-modal{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(5,13,26,0.7);z-index:20;display:none;flex-direction:column;justify-content:flex-end;}
+.incident-modal.show{display:flex;}
+.inc-sheet{background:var(--bg2);border-radius:20px 20px 0 0;padding:16px;border-top:1px solid var(--bd);}
+.inc-title{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:12px;text-align:center;}
+.inc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+.inc-btn{background:var(--bg3);border:1px solid var(--bd);border-radius:12px;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;}
+.inc-lbl{font-size:10px;color:var(--txt2);text-align:center;}
+.inc-close{width:100%;background:var(--lb);border-radius:12px;padding:10px;font-size:13px;font-weight:600;color:#fff;cursor:pointer;text-align:center;}
+</style>
+
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;">LUCA — App de navegación mundial con mapas 2026, modo nocturno, alertas de tráfico y reporte de incidentes</h2>
+
+<div class="app" id="app">
+
+  <div class="hdr">
+    <div class="hdr-logo">
+      <svg class="star" viewBox="0 0 36 36" fill="none">
+        <circle cx="18" cy="18" r="17" fill="#0D47A1" stroke="#FDD835" stroke-width="1.5"/>
+        <path d="M18 3L19.8 16.2L33 18L19.8 19.8L18 33L16.2 19.8L3 18L16.2 16.2Z" fill="#FDD835"/>
+        <path d="M18 8L18.9 16.1L25 18L18.9 19.9L18 28L17.1 19.9L11 18L17.1 16.1Z" fill="#FDD835" opacity=".55"/>
+        <circle cx="18" cy="18" r="2.8" fill="#fff"/>
+      </svg>
+      <div>
+        <div class="app-name">LUCA</div>
+        <div class="tagline">NAVEGACIÓN MUNDIAL 2026</div>
+      </div>
+    </div>
+    <div class="hdr-right">
+      <div class="night-btn" onclick="toggleNight()" id="night-btn">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 6.5A4.5 4.5 0 015 2c0-.3.03-.6.07-.9A4.5 4.5 0 1010 6.5z" fill="var(--ly)"/></svg>
+        Noche
+      </div>
+      <div class="sig"></div>
+      <div class="gps-t">GPS</div>
+    </div>
+  </div>
+
+  <div class="srch">
+    <div class="srch-box" onclick="showScr('home')">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><path d="M9.5 9.5L12 12" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span class="srch-ph">¿A dónde vamos hoy?</span>
+    </div>
+    <div class="mic" onclick="reportInc()">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="5.5" y="1" width="5" height="9" rx="2.5" fill="#0D47A1"/><path d="M2.5 8C2.5 11.038 4.962 13.5 8 13.5C11.038 13.5 13.5 11.038 13.5 8" stroke="#0D47A1" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="13.5" x2="8" y2="15.5" stroke="#0D47A1" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </div>
+  </div>
+
+  <div class="screens">
+
+    <div class="scr on" id="scr-map">
+      <div class="map-wrap">
+        <svg class="map-svg" viewBox="0 0 430 340" id="map-svg">
+          <rect width="430" height="340" fill="var(--bg)"/>
+          <rect x="0" y="0" width="65" height="58" fill="#0d1e38"/>
+          <rect x="85" y="0" width="95" height="58" fill="#0d1e38"/>
+          <rect x="200" y="0" width="85" height="58" fill="#0d1e38"/>
+          <rect x="305" y="0" width="125" height="58" fill="#0d1e38"/>
+          <rect x="0" y="78" width="65" height="72" fill="#0d1e38"/>
+          <rect x="85" y="78" width="95" height="72" fill="#0d1e38"/>
+          <rect x="200" y="78" width="85" height="72" fill="#0d1e38"/>
+          <rect x="305" y="78" width="125" height="72" fill="#0d1e38"/>
+          <rect x="0" y="170" width="65" height="82" fill="#0d1e38"/>
+          <rect x="85" y="170" width="95" height="82" fill="#0d1e38"/>
+          <rect x="200" y="170" width="85" height="82" fill="#0d1e38"/>
+          <rect x="305" y="170" width="125" height="82" fill="#0d1e38"/>
+          <rect x="0" y="272" width="65" height="68" fill="#0d1e38"/>
+          <rect x="85" y="272" width="95" height="68" fill="#0d1e38"/>
+          <rect x="200" y="272" width="85" height="68" fill="#0d1e38"/>
+          <rect x="305" y="272" width="125" height="68" fill="#0d1e38"/>
+          <rect x="0" y="58" width="430" height="20" fill="#162644"/>
+          <rect x="0" y="150" width="430" height="20" fill="#162644"/>
+          <rect x="0" y="252" width="430" height="20" fill="#162644"/>
+          <rect x="65" y="0" width="20" height="340" fill="#162644"/>
+          <rect x="180" y="0" width="20" height="340" fill="#162644"/>
+          <rect x="285" y="0" width="20" height="340" fill="#162644"/>
+          <path d="M75 310 L75 160 L140 160 L140 68 L215 68 L215 30 L330 30" class="rt-pulse"/>
+          <path d="M75 310 L75 160 L140 160 L140 68 L215 68 L215 30 L330 30" class="rt-line rt-anim"/>
+          <circle cx="330" cy="30" r="11" fill="#FF5252"/>
+          <circle cx="330" cy="30" r="5" fill="#fff"/>
+          <circle cx="75" cy="310" r="24" fill="rgba(253,216,53,0.08)" class="pulse"/>
+          <circle cx="75" cy="310" r="14" fill="rgba(21,101,192,0.2)"/>
+          <circle cx="75" cy="310" r="9" fill="#1565C0"/>
+          <circle cx="75" cy="310" r="5" fill="#FDD835"/>
+          <path d="M75 302 L71 312 L75 309 L79 312 Z" fill="#fff" opacity=".9"/>
+          <rect x="127" y="153" width="16" height="16" rx="3" fill="#FF5252"/>
+          <text x="135" y="165" text-anchor="middle" fill="#fff" font-size="10" font-family="sans-serif" font-weight="700">!</text>
+          <circle cx="108" cy="160" r="4" fill="#FDD835"/>
+          <circle cx="155" cy="160" r="4" fill="#4CAF50"/>
+          <circle cx="215" cy="105" r="4" fill="#4CAF50"/>
+          <circle cx="310" cy="160" r="4" fill="#FF5252"/>
+          <circle cx="355" cy="160" r="4" fill="#FDD835"/>
+          <circle cx="75" cy="200" r="4" fill="#4CAF50"/>
+          <rect x="100" y="85" width="18" height="18" rx="3" fill="#1565C0"/>
+          <text x="109" y="97" text-anchor="middle" fill="#FDD835" font-size="9" font-family="sans-serif">P</text>
+          <rect x="205" y="180" width="20" height="14" rx="2" fill="#0d6e56"/>
+          <text x="215" y="191" text-anchor="middle" fill="#fff" font-size="8" font-family="sans-serif">GAS</text>
+          <rect x="95" y="180" width="22" height="14" rx="2" fill="#4A148C"/>
+          <text x="106" y="191" text-anchor="middle" fill="#fff" font-size="7" font-family="sans-serif">CAFE</text>
+          <text x="95" y="56" fill="rgba(255,255,255,0.3)" font-size="8" font-family="sans-serif" text-anchor="middle">Av. Principal</text>
+          <text x="95" y="148" fill="rgba(255,255,255,0.3)" font-size="8" font-family="sans-serif" text-anchor="middle">Calle Norte</text>
+          <text x="95" y="250" fill="rgba(255,255,255,0.3)" font-size="8" font-family="sans-serif" text-anchor="middle">Ronda Sur</text>
+          <text x="76" y="28" fill="rgba(255,255,255,0.3)" font-size="7" font-family="sans-serif" text-anchor="middle" transform="rotate(-90,76,28)">C/ Mar</text>
+          <text x="191" y="28" fill="rgba(255,255,255,0.3)" font-size="7" font-family="sans-serif" text-anchor="middle" transform="rotate(-90,191,28)">C/ Sol</text>
+        </svg>
+
+        <div class="spd"><div class="spd-n" id="spd-n">58</div><div class="spd-u">km/h</div></div>
+        <div class="trf-bar"><div class="trf-d" id="trf-d" style="background:#4CAF50;"></div><div class="trf-t" id="trf-t">Tráfico fluido</div></div>
+
+        <div class="turn-card">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="rgba(255,255,255,0.12)"/><path d="M10 22V12M10 12L18 12V8L24 14L18 20V16H10" stroke="#FDD835" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div>
+            <div style="display:flex;align-items:baseline;gap:4px;"><div class="turn-dist">400</div><div class="turn-u">m</div></div>
+            <div class="turn-st">Girar a la derecha</div>
+            <div class="turn-sub">Av. Principal → Calle Norte</div>
+          </div>
+        </div>
+
+        <div class="float-r">
+          <div class="mb" onclick="reportInc()">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2L10.5 7.5H16L11.5 10.8L13 16L9 13L5 16L6.5 10.8L2 7.5H7.5Z" stroke="#FDD835" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="mb">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#fff" stroke-width="1.5"/><line x1="8" y1="2" x2="8" y2="14" stroke="#fff" stroke-width="1"/><line x1="2" y1="8" x2="14" y2="8" stroke="#fff" stroke-width="1"/></svg>
+          </div>
+          <div class="mb">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 14L8 2M2 8L14 8" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+
+        <div class="eta-card">
+          <div><div class="eta-t" id="eta-t">18</div><div class="eta-u">min</div></div>
+          <div style="flex:1"><div class="eta-d">7.4 km restantes</div><div class="eta-r">Llegada: 14:32 · Ruta rápida</div></div>
+          <div class="go-btn">▶ IR</div>
+        </div>
+
+        <div class="incident-modal" id="inc-modal">
+          <div class="inc-sheet">
+            <div class="inc-title">Reportar incidente</div>
+            <div class="inc-grid">
+              <div class="inc-btn" onclick="sendInc('Accidente')"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 18L11 4L19 18H3Z" stroke="#FF5252" stroke-width="1.8" stroke-linejoin="round"/><line x1="11" y1="10" x2="11" y2="14" stroke="#FF5252" stroke-width="1.8"/><circle cx="11" cy="16.5" r="1" fill="#FF5252"/></svg><div class="inc-lbl">Accidente</div></div>
+              <div class="inc-btn" onclick="sendInc('Radar')"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="7" stroke="#FDD835" stroke-width="1.8"/><circle cx="11" cy="11" r="3" stroke="#FDD835" stroke-width="1.5"/><circle cx="11" cy="11" r="1.5" fill="#FDD835"/></svg><div class="inc-lbl">Radar</div></div>
+              <div class="inc-btn" onclick="sendInc('Obras')"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="14" width="16" height="4" rx="1" stroke="#FDD835" stroke-width="1.8"/><path d="M8 14V9L11 6L14 9V14" stroke="#FDD835" stroke-width="1.8" stroke-linejoin="round"/></svg><div class="inc-lbl">Obras</div></div>
+              <div class="inc-btn" onclick="sendInc('Peligro')"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 3L20 19H2L11 3Z" stroke="#FF5252" stroke-width="1.8"/><text x="11" y="16" text-anchor="middle" fill="#FF5252" font-size="9">!</text></svg><div class="inc-lbl">Peligro</div></div>
+              <div class="inc-btn" onclick="sendInc('Policía')"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="8" r="4" stroke="#1E88E5" stroke-width="1.8"/><path d="M4 20c0-3.31 3.13-6 7-6s7 2.69 7 6" stroke="#1E88E5" stroke-width="1.8" stroke-linecap="round"/></svg><div class="inc-lbl">Policía</div></div>
+              <div class="inc-btn" onclick="sendInc('Carretera cortada')"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><line x1="3" y1="11" x2="19" y2="11" stroke="#FF5252" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="7" x2="19" y2="7" stroke="#FF5252" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="3 3"/><line x1="3" y1="15" x2="19" y2="15" stroke="#FF5252" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="3 3"/></svg><div class="inc-lbl">Cortada</div></div>
+              <div class="inc-btn" onclick="sendInc('Objeto en vía')"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="7" y="9" width="8" height="8" rx="2" stroke="#FDD835" stroke-width="1.8"/><path d="M11 5V9" stroke="#FDD835" stroke-width="1.8"/></svg><div class="inc-lbl">Objeto</div></div>
+              <div class="inc-btn" onclick="sendInc('Mal tiempo')"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M6 16a4 4 0 010-8 5.5 5.5 0 0110.9 1.5A3 3 0 1117 16H6z" stroke="#1E88E5" stroke-width="1.8" stroke-linejoin="round"/></svg><div class="inc-lbl">Clima</div></div>
+            </div>
+            <div class="inc-close" onclick="closeInc()">Cancelar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scr" id="scr-home">
+      <div class="home-wrap">
+        <div class="world-bar">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12" stroke="#FDD835" stroke-width="1.5"/><ellipse cx="14" cy="14" rx="5" ry="12" stroke="#FDD835" stroke-width="1"/><line x1="2" y1="14" x2="26" y2="14" stroke="#FDD835" stroke-width="1"/><line x1="4" y1="8" x2="24" y2="8" stroke="#FDD835" stroke-width=".8" opacity=".6"/><line x1="4" y1="20" x2="24" y2="20" stroke="#FDD835" stroke-width=".8" opacity=".6"/></svg>
+          <div><div class="wt">Cobertura Mundial</div><div class="ws">Mapas actualizados 2026 · Tiempo real</div></div>
+          <div class="wc">195+</div>
+        </div>
+        <div class="shortcuts">
+          <div class="sc"><div class="si" style="background:#1565C020;"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2C6.24 2 4 4.24 4 7C4 11 9 16 9 16S14 11 14 7C14 4.24 11.76 2 9 2ZM9 9C7.9 9 7 8.1 7 7S7.9 5 9 5 11 5.9 11 7 10.1 9 9 9Z" fill="#FDD835"/></svg></div><div><div class="sl">Casa</div><div class="ss">3.2 km · 8 min</div></div></div>
+          <div class="sc"><div class="si" style="background:#1976D220;"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="7" width="14" height="9" rx="1.5" stroke="#1E88E5" stroke-width="1.5"/><path d="M6 7V5C6 3.34 7.34 2 9 2C10.66 2 12 3.34 12 5V7" stroke="#1E88E5" stroke-width="1.5"/></svg></div><div><div class="sl">Trabajo</div><div class="ss">5.8 km · 14 min</div></div></div>
+          <div class="sc"><div class="si" style="background:#00C85320;"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 14L9 4L16 14H2Z" stroke="#00C853" stroke-width="1.5" stroke-linejoin="round"/></svg></div><div><div class="sl">Gasolinera</div><div class="ss">1.1 km · 3 min</div></div></div>
+          <div class="sc"><div class="si" style="background:#FF525220;"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="#FF5252" stroke-width="1.5"/><path d="M9 5V9L12 11" stroke="#FF5252" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><div class="sl">Reciente</div><div class="ss">Última ruta</div></div></div>
+        </div>
+        <div class="sec-t">Recientes</div>
+        <div class="ri"><div class="rd" style="background:#FDD835;"></div><div><div class="rn">Aeropuerto Internacional</div><div class="ra">Terminal 2 · Ayer</div></div><div class="rdi">22 km</div></div>
+        <div class="ri"><div class="rd" style="background:#1E88E5;"></div><div><div class="rn">Centre Comercial Girona</div><div class="ra">Av. Catalunya · Hace 2 días</div></div><div class="rdi">6.3 km</div></div>
+        <div class="ri"><div class="rd" style="background:#69F0AE;"></div><div><div class="rn">Playa de Sant Pol</div><div class="ra">Costa Brava · Hace 3 días</div></div><div class="rdi">38 km</div></div>
+        <div class="ri"><div class="rd" style="background:#FF5252;"></div><div><div class="rn">Hospital Universitari</div><div class="ra">Girona · Hace 5 días</div></div><div class="rdi">4.1 km</div></div>
+        <div class="ri"><div class="rd" style="background:#CE93D8;"></div><div><div class="rn">Estadio de Montilivi</div><div class="ra">Girona FC · Hace 1 semana</div></div><div class="rdi">2.8 km</div></div>
+      </div>
+    </div>
+
+    <div class="scr" id="scr-alerts">
+      <div class="alert-wrap">
+        <div style="font-size:12px;color:var(--txt2);padding:2px 0 6px;">Alertas en tu zona — Girona y alrededores</div>
+        <div class="alert-card">
+          <div class="alert-icon" style="background:#FF525220;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 17L10 4L17 17H3Z" stroke="#FF5252" stroke-width="1.8" stroke-linejoin="round"/><line x1="10" y1="9" x2="10" y2="13" stroke="#FF5252" stroke-width="1.8"/><circle cx="10" cy="15" r="1" fill="#FF5252"/></svg></div>
+          <div><div class="alert-title">Accidente en AP-7 km 42</div><div class="alert-sub">Carril derecho cortado. Retenciones de 4 km. Usar salida 7.</div><div class="alert-time">Hace 12 min · Reportado por 8 usuarios</div><div class="badge" style="background:rgba(255,82,82,0.15);color:#FF5252;">Alta afectación</div></div>
+        </div>
+        <div class="alert-card">
+          <div class="alert-icon" style="background:#FDD83520;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="#FDD835" stroke-width="1.8"/><circle cx="10" cy="10" r="3" stroke="#FDD835" stroke-width="1.5"/><circle cx="10" cy="10" r="1.5" fill="#FDD835"/></svg></div>
+          <div><div class="alert-title">Radar de velocidad — Calle Migdia</div><div class="alert-sub">Control móvil de velocidad activo. Límite 50 km/h.</div><div class="alert-time">Hace 28 min · 14 confirmaciones</div><div class="badge" style="background:rgba(253,216,53,0.12);color:#F9A825;">Confirmado</div></div>
+        </div>
+        <div class="alert-card">
+          <div class="alert-icon" style="background:#FDD83520;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="13" width="14" height="4" rx="1" stroke="#FDD835" stroke-width="1.8"/><path d="M7 13V9L10 6L13 9V13" stroke="#FDD835" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+          <div><div class="alert-title">Obras en Av. França — 3 semanas</div><div class="alert-sub">Obras de asfaltado. Tráfico reducido a 1 carril.</div><div class="alert-time">Actualizado hoy</div><div class="badge" style="background:rgba(253,216,53,0.12);color:#F9A825;">Obras planificadas</div></div>
+        </div>
+        <div class="alert-card">
+          <div class="alert-icon" style="background:#1E88E520;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 15a4 4 0 010-8 5.5 5.5 0 0110.9 1.5A3 3 0 1116 15H5z" stroke="#1E88E5" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+          <div><div class="alert-title">Lluvia intensa — Costa Brava</div><div class="alert-sub">Visibilidad reducida. Calzada mojada. Conduce con precaución.</div><div class="alert-time">Alerta meteorológica activa</div><div class="badge" style="background:rgba(30,136,229,0.12);color:#1E88E5;">Tiempo adverso</div></div>
+        </div>
+        <div class="alert-card">
+          <div class="alert-icon" style="background:#69F0AE20;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 3L12 8H17L13 11L14.5 16L10 13L5.5 16L7 11L3 8H8Z" stroke="#4CAF50" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+          <div><div class="alert-title">Ruta alternativa disponible</div><div class="alert-sub">Ahorras 9 min evitando AP-7. LUCA recalcula automáticamente.</div><div class="alert-time">Ahora mismo</div><div class="badge" style="background:rgba(76,175,80,0.12);color:#4CAF50;">Recomendado</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scr" id="scr-profile">
+      <div class="profile-wrap">
+        <div class="avatar-area">
+          <div class="avatar">L</div>
+          <div class="av-name">Usuario LUCA</div>
+          <div class="av-sub">Nivel Explorador · 2.340 km navegados</div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-n">142</div><div class="stat-l">Rutas</div></div>
+          <div class="stat-card"><div class="stat-n">38</div><div class="stat-l">Reportes</div></div>
+          <div class="stat-card"><div class="stat-n">2.3K</div><div class="stat-l">km</div></div>
+        </div>
+        <div class="pref-sec">
+          <div class="pref-title">Preferencias</div>
+          <div class="pref-row">
+            <div style="display:flex;align-items:center;gap:10px;flex:1;">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1L9 6H14L10 9L11.5 14L8 11L4.5 14L6 9L2 6H7Z" stroke="#FDD835" stroke-width="1.5" stroke-linejoin="round"/></svg>
+              <div class="pref-label">Modo nocturno automático</div>
+            </div>
+            <button class="toggle on" id="tog-night" onclick="togglePref(this)"></button>
+          </div>
+          <div class="pref-row">
+            <div style="display:flex;align-items:center;gap:10px;flex:1;">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#1E88E5" stroke-width="1.5"/><circle cx="8" cy="8" r="2" stroke="#1E88E5" stroke-width="1.5"/><line x1="8" y1="2" x2="8" y2="4" stroke="#1E88E5" stroke-width="1.5"/><line x1="8" y1="12" x2="8" y2="14" stroke="#1E88E5" stroke-width="1.5"/></svg>
+              <div class="pref-label">Alertas de radares</div>
+            </div>
+            <button class="toggle on" id="tog-rad" onclick="togglePref(this)"></button>
+          </div>
+          <div class="pref-row">
+            <div style="display:flex;align-items:center;gap:10px;flex:1;">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 10L8 4L13 10" stroke="#FF5252" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="8" y1="4" x2="8" y2="14" stroke="#FF5252" stroke-width="1.5"/></svg>
+              <div class="pref-label">Evitar autopistas de pago</div>
+            </div>
+            <button class="toggle off" id="tog-toll" onclick="togglePref(this)"></button>
+          </div>
+          <div class="pref-row">
+            <div style="display:flex;align-items:center;gap:10px;flex:1;">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="8" width="12" height="6" rx="2" stroke="#4CAF50" stroke-width="1.5"/><circle cx="5" cy="8" r="2" stroke="#4CAF50" stroke-width="1.5"/><circle cx="11" cy="8" r="2" stroke="#4CAF50" stroke-width="1.5"/></svg>
+              <div class="pref-label">Ruta ecológica</div>
+            </div>
+            <button class="toggle off" id="tog-eco" onclick="togglePref(this)"></button>
+          </div>
+          <div class="pref-row">
+            <div style="display:flex;align-items:center;gap:10px;flex:1;">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2C5.24 2 3 4.24 3 7C3 11 8 14 8 14S13 11 13 7C13 4.24 10.76 2 8 2Z" stroke="#FDD835" stroke-width="1.5"/><circle cx="8" cy="7" r="2" stroke="#FDD835" stroke-width="1.5"/></svg>
+              <div class="pref-label">Compartir ubicación en tiempo real</div>
+            </div>
+            <button class="toggle on" id="tog-loc" onclick="togglePref(this)"></button>
+          </div>
+        </div>
+        <div class="pref-sec">
+          <div class="pref-title">Idioma y región</div>
+          <div class="pref-row"><div class="pref-label">Idioma</div><div class="pref-val">Español</div></div>
+          <div class="pref-row"><div class="pref-label">Unidades</div><div class="pref-val">km/h · km</div></div>
+          <div class="pref-row"><div class="pref-label">Voz de navegación</div><div class="pref-val">Español (ES)</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="btn-nav">
+    <div class="ni on" id="ni-map" onclick="showScr('map')">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2C7.69 2 5 4.69 5 8C5 12.5 11 20 11 20S17 12.5 17 8C17 4.69 14.31 2 11 2ZM11 10.5C9.62 10.5 8.5 9.38 8.5 8S9.62 5.5 11 5.5 13.5 6.62 13.5 8 12.38 10.5 11 10.5Z" fill="#FDD835"/></svg>
+      <div class="nl" id="nl-map" style="color:#FDD835;">MAPA</div>
+    </div>
+    <div class="ni" id="ni-home" onclick="showScr('home')">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="10" cy="10" r="7" stroke="rgba(255,255,255,0.4)" stroke-width="1.8"/><path d="M15 15L19 19" stroke="rgba(255,255,255,0.4)" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <div class="nl" id="nl-home">BUSCAR</div>
+    </div>
+    <div class="ni" id="ni-alerts" onclick="showScr('alerts')">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 3L13 8H18L14 11.5L15.5 17L11 14L6.5 17L8 11.5L4 8H9Z" stroke="rgba(255,255,255,0.4)" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      <div class="nl" id="nl-alerts">ALERTAS</div>
+    </div>
+    <div class="ni" id="ni-profile" onclick="showScr('profile')">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="8" r="4" stroke="rgba(255,255,255,0.4)" stroke-width="1.8"/><path d="M3 20C3 16.69 6.69 14 11 14S19 16.69 19 20" stroke="rgba(255,255,255,0.4)" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <div class="nl" id="nl-profile">PERFIL</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var nightMode=false;
+var scrIds=['map','home','alerts','profile'];
+
+function showScr(name){
+  scrIds.forEach(function(s){
+    var sc=document.getElementById('scr-'+s);
+    var ni=document.getElementById('ni-'+s);
+    var nl=document.getElementById('nl-'+s);
+    sc.classList.remove('on');
+    ni.classList.remove('on');
+    if(nl) nl.style.color='';
+  });
+  document.getElementById('scr-'+name).classList.add('on');
+  document.getElementById('ni-'+name).classList.add('on');
+  var nl=document.getElementById('nl-'+name);
+  if(nl) nl.style.color='#FDD835';
+}
+
+function toggleNight(){
+  nightMode=!nightMode;
+  var app=document.getElementById('app');
+  var btn=document.getElementById('night-btn');
+  if(nightMode){
+    app.classList.add('night');
+    btn.innerHTML='<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="3" fill="#FDD835"/><line x1="6" y1="1" x2="6" y2="3" stroke="#FDD835" stroke-width="1.5"/><line x1="6" y1="9" x2="6" y2="11" stroke="#FDD835" stroke-width="1.5"/><line x1="1" y1="6" x2="3" y2="6" stroke="#FDD835" stroke-width="1.5"/><line x1="9" y1="6" x2="11" y2="6" stroke="#FDD835" stroke-width="1.5"/></svg> Día';
+  } else {
+    app.classList.remove('night');
+    btn.innerHTML='<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 6.5A4.5 4.5 0 015 2c0-.3.03-.6.07-.9A4.5 4.5 0 1010 6.5z" fill="var(--ly)"/></svg> Noche';
+  }
+}
+
+function reportInc(){
+  document.getElementById('inc-modal').classList.add('show');
+}
+function closeInc(){
+  document.getElementById('inc-modal').classList.remove('show');
+}
+function sendInc(type){
+  closeInc();
+  var trf=document.getElementById('trf-t');
+  var dot=document.getElementById('trf-d');
+  trf.textContent='¡Reporte enviado: '+type+'!';
+  dot.style.background='#FF5252';
+  setTimeout(function(){
+    trf.textContent='Tráfico fluido';
+    dot.style.background='#4CAF50';
+  },3000);
+}
+
+function togglePref(btn){
+  if(btn.classList.contains('on')){
+    btn.classList.remove('on');
+    btn.classList.add('off');
+  } else {
+    btn.classList.remove('off');
+    btn.classList.add('on');
+  }
+}
+
+var speeds=[52,55,58,60,62,60,57,55,58,60];
+var si=0;
+setInterval(function(){
+  var el=document.getElementById('spd-n');
+  if(el){el.textContent=speeds[si%speeds.length];si++;}
+},2000);
+
+var eta=18;
+setInterval(function(){
+  var el=document.getElementById('eta-t');
+  if(el&&eta>0){eta--;el.textContent=eta;}
+},30000);
+</script>
